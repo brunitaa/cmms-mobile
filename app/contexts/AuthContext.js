@@ -1,22 +1,22 @@
 import React, { createContext, useState, useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage"; // AsyncStorage en React Native
-import authService from "../services/authService"; // Importa el servicio de autenticación
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import authService from "../services/authService";
 import userService from "../services/userService";
 
-import { useNavigation } from "@react-navigation/native"; // Importamos el hook de navegación
+import { useNavigation } from "@react-navigation/native";
 
 import { ToastAndroid } from "react-native";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // Almacena los datos del usuario
-  const [loading, setLoading] = useState(true); // Estado de carga (para la sesión)
-  const navigation = useNavigation(); // Usamos el hook de navegación
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   checkUserSession();
-  // }, []);
+  useEffect(() => {
+    checkUserSession();
+  }, []);
 
   const checkUserSession = async () => {
     try {
@@ -26,24 +26,24 @@ export const AuthProvider = ({ children }) => {
       if (accessToken) {
         const response = await authService.verifyAccessToken(accessToken);
         console.log("Respuesta de verifyAccessToken en AuthContext:", response);
-        setUser(response.data); // Si hay un token, el usuario está logueado
+        setUser(response.data);
         navigation.reset({
           index: 0,
           routes: [{ name: "WorkOrdersScreen" }],
-        }); // Navega a la pantalla principal
+        });
       }
     } catch (error) {
       console.error("Error al verificar sesión:", error.errors[0].message);
       ToastAndroid.show(error.errors[0].message, ToastAndroid.SHORT);
     } finally {
-      setLoading(false); // Ya terminamos la carga
+      setLoading(false);
     }
   };
 
   const signIn = async (email, password) => {
     try {
       const response = await authService.signIn(email, password);
-      setUser(response.data); // Almacena el usuario en el estado
+      setUser(response.data);
       const accessToken = response.data.auth.accessToken;
       const refreshToken = response.data.auth.refreshToken;
 
@@ -67,11 +67,11 @@ export const AuthProvider = ({ children }) => {
       navigation.reset({
         index: 0,
         routes: [{ name: "SignIn" }],
-      }); // Navega a la pantalla principal
+      });
       const refreshToken = await AsyncStorage.getItem("refreshToken");
       console.log("REFRESHTOKEN EN CONTEXT: ", refreshToken);
-      const response = await authService.signOut(refreshToken); // Llama al servicio de logout
-      setUser(null); // Elimina al usuario del estado
+      const response = await authService.signOut(refreshToken);
+      setUser(null);
       await AsyncStorage.removeItem("accessToken");
       await AsyncStorage.removeItem("refreshToken");
 
