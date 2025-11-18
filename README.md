@@ -1,1 +1,1 @@
-# cmms-mobile
+# capstone-cmms-client-mobile
