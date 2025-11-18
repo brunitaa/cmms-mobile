@@ -1,25 +1,37 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { TextInput, View, StyleSheet } from "react-native";
 
 const OtpInput = ({ otp, setOtp }) => {
-  const inputRefs = useRef(otp.map(() => React.createRef()));
+  const inputRefs = useRef([]);
 
-  // Función para manejar el cambio en los cuadros del OTP
+  useEffect(() => {
+    inputRefs.current = otp.map(
+      (_, i) => inputRefs.current[i] || React.createRef()
+    );
+  }, [otp]);
+
   const handleOtpChange = (text, index) => {
-    if (text.length <= 1) {
+    if (text.length > 1) return;
+
+    const updatedOtp = [...otp];
+    updatedOtp[index] = text;
+    setOtp(updatedOtp);
+
+    if (text && index < otp.length - 1) {
+      inputRefs.current[index + 1].current.focus();
+    }
+
+    if (!text && index > 0) {
+      inputRefs.current[index - 1].current.focus();
+    }
+  };
+
+  const handleKeyPress = (e, index) => {
+    if (e.nativeEvent.key === "Backspace" && !otp[index] && index > 0) {
       const updatedOtp = [...otp];
-      updatedOtp[index] = text;
+      updatedOtp[index - 1] = "";
       setOtp(updatedOtp);
-
-      // Mover al siguiente cuadro automáticamente si el campo no está vacío
-      if (text.length === 1 && index < otp.length - 1) {
-        inputRefs.current[index + 1].current.focus();
-      }
-
-      // Mover al campo anterior si está vacío y el índice no es el primero
-      if (text.length === 0 && index > 0) {
-        inputRefs.current[index - 1].current.focus();
-      }
+      inputRefs.current[index - 1].current.focus();
     }
   };
 
@@ -32,18 +44,7 @@ const OtpInput = ({ otp, setOtp }) => {
           style={styles.otpInput}
           value={digit}
           onChangeText={(text) => handleOtpChange(text, index)}
-          onKeyPress={({ nativeEvent }) => {
-            if (nativeEvent.key === "Backspace" && !otp[index] && index > 0) {
-              // Si se presiona backspace y el cuadro está vacío, moverse al anterior
-              const prevInputRef = inputRefs.current[index - 1];
-              if (prevInputRef && prevInputRef.current) {
-                prevInputRef.current.focus();
-                const updatedOtp = [...otp];
-                updatedOtp[index - 1] = ""; // Borrar el valor del campo anterior
-                setOtp(updatedOtp);
-              }
-            }
-          }}
+          onKeyPress={(e) => handleKeyPress(e, index)}
           keyboardType="numeric"
           maxLength={1}
           textAlign="center"
@@ -65,7 +66,6 @@ const styles = StyleSheet.create({
     height: 48,
     borderWidth: 1,
     borderColor: "#ccc",
-    textAlign: "center",
     fontSize: 18,
     borderRadius: 10,
   },

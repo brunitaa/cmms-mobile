@@ -1,27 +1,19 @@
 import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  Modal,
-} from "react-native";
+import { View, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
 import { SlidersHorizontal } from "lucide-react-native";
 
 const SearchBar = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isFilterVisible, setIsFilterVisible] = useState(false);
 
-  const handleChange = (text) => {
+  const handleSearchChange = (text) => {
     setSearchQuery(text);
     onSearch(text);
   };
 
-  const toggleFilterVisibility = () => {
-    setIsFilterVisible(!isFilterVisible);
+  const toggleFilter = () => {
+    setIsFilterVisible((prev) => !prev);
   };
 
   return (
@@ -30,17 +22,16 @@ const SearchBar = ({ onSearch }) => {
         <TouchableOpacity style={styles.iconContainer}>
           <Ionicons name="search" size={20} color="#888" />
         </TouchableOpacity>
+
         <TextInput
           style={styles.input}
           placeholder="Buscar..."
-          value={searchQuery}
-          onChangeText={handleChange}
           placeholderTextColor="#888"
+          value={searchQuery}
+          onChangeText={handleSearchChange}
         />
-        <TouchableOpacity
-          style={styles.filterContainer}
-          onPress={toggleFilterVisibility}
-        >
+
+        <TouchableOpacity style={styles.filterContainer} onPress={toggleFilter}>
           <SlidersHorizontal size={24} color="#4b4b4b" />
         </TouchableOpacity>
       </View>
@@ -56,15 +47,15 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   searchBox: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#ffffff",
-    flex: 1,
+    backgroundColor: "#fff",
     paddingLeft: 14,
     paddingRight: 10,
     paddingVertical: 8,
-    borderWidth: 1,
     borderRadius: 14,
+    borderWidth: 1,
     borderColor: "#e1e1e1",
   },
   iconContainer: {
@@ -76,15 +67,13 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   filterContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 10,
     marginLeft: 10,
     backgroundColor: "#f4f4f5",
     borderRadius: 12,
     height: 40,
     width: 45,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

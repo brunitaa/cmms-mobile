@@ -15,10 +15,7 @@ const Dropdown = ({ options, onSelect }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState(null);
   const heightAnim = useRef(new Animated.Value(0)).current;
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
 
   useEffect(() => {
     Animated.timing(heightAnim, {
@@ -26,7 +23,7 @@ const Dropdown = ({ options, onSelect }) => {
       duration: 200,
       useNativeDriver: false,
     }).start();
-  }, [isOpen]);
+  }, [isOpen, options.length]);
 
   const handleSelect = (option) => {
     setSelectedOption(option);
@@ -36,6 +33,7 @@ const Dropdown = ({ options, onSelect }) => {
 
   return (
     <View style={styles.container}>
+      {/* Botón principal */}
       <TouchableOpacity style={styles.button} onPress={toggleDropdown}>
         <Text style={styles.buttonText}>
           {selectedOption || "Selecciona una opción"}
@@ -43,6 +41,7 @@ const Dropdown = ({ options, onSelect }) => {
         <ChevronDown size={20} color="#333" />
       </TouchableOpacity>
 
+      {/* Modal del dropdown */}
       <Modal
         transparent
         visible={isOpen}
@@ -53,7 +52,7 @@ const Dropdown = ({ options, onSelect }) => {
           <Animated.View style={[styles.dropdown, { height: heightAnim }]}>
             <FlatList
               data={options}
-              keyExtractor={(item, index) => index.toString()}
+              keyExtractor={(_, index) => index.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.option}

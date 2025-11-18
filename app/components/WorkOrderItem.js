@@ -1,52 +1,37 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Feather from "@expo/vector-icons/Feather";
-
+import { Siren, ShieldCheck, Users, Loader } from "lucide-react-native";
 import Badge from "./Badge";
 
-import { Siren, ShieldCheck, Users, Loader } from "lucide-react-native";
-
-// Componente Header
-const WorkOrderHeader = ({ title, onNavigate, order }) => {
-  const navigation = useNavigation();
-
-  return (
-    <View style={styles.headerContainer}>
-      <View style={{ gap: 4, flex: 1 }}>
-        <Text numberOfLines={1} ellipsizeMode="tail" style={styles.titleText}>
-          {title}
-        </Text>
-        <View style={{ flexDirection: "row", gap: 6, marginTop: 4 }}>
-          <Badge
-            icon={<ShieldCheck size={14} color="#1e88e5" />}
-            label="Preventivo"
-            style={{
-              container: {
-                backgroundColor: "#e3f2fd", // Fondo azul claro
-                borderColor: "#1e88e5", // Borde azul más fuerte
-              },
-              label: { color: "#1e88e5" }, // Texto en azul más fuerte
-            }}
-          />
-          <Badge
-            icon={<Siren size={14} color="#e53935" />}
-            label="Critica"
-            style={{
-              container: {
-                backgroundColor: "#ffebee", // Fondo rojo claro
-                borderColor: "#e53935", // Borde rojo más fuerte
-              },
-              label: { color: "#e53935" }, // Texto en rojo más fuerte
-            }}
-          />
-        </View>
+const WorkOrderHeader = ({ title }) => (
+  <View style={styles.headerContainer}>
+    <View style={{ gap: 4, flex: 1 }}>
+      <Text numberOfLines={1} ellipsizeMode="tail" style={styles.titleText}>
+        {title}
+      </Text>
+      <View style={{ flexDirection: "row", gap: 6, marginTop: 4 }}>
+        <Badge
+          icon={<ShieldCheck size={14} color="#1e88e5" />}
+          label="Preventivo"
+          style={{
+            container: { backgroundColor: "#e3f2fd", borderColor: "#1e88e5" },
+            label: { color: "#1e88e5" },
+          }}
+        />
+        <Badge
+          icon={<Siren size={14} color="#e53935" />}
+          label="Critica"
+          style={{
+            container: { backgroundColor: "#ffebee", borderColor: "#e53935" },
+            label: { color: "#e53935" },
+          }}
+        />
       </View>
     </View>
-  );
-};
+  </View>
+);
 
-// Componente de Técnicos Asignados
 const CardFooter = ({ technicianId }) => (
   <View style={styles.CardFooterContainer}>
     <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
@@ -63,25 +48,16 @@ const CardFooter = ({ technicianId }) => (
 const WorkOrderItem = ({ item }) => {
   const navigation = useNavigation();
 
-  const handleNavigate = (order) => {
-    navigation.navigate("WorkOrderScreen", { order });
+  const handleNavigate = () => {
+    navigation.navigate("WorkOrderScreen", { order: item });
   };
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPress={() => handleNavigate(item)}
-    >
-      <WorkOrderHeader
-        title={item.title}
-        onNavigate={handleNavigate}
-        order={item}
-      />
-
+    <TouchableOpacity style={styles.container} onPress={handleNavigate}>
+      <WorkOrderHeader title={item.title} />
       <Text style={styles.descriptionText} numberOfLines={3}>
         {item.description}
       </Text>
-
       <CardFooter technicianId={item.technicianId} />
     </TouchableOpacity>
   );
@@ -107,18 +83,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     width: "100%",
-  },
-  navigateButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 8,
-    borderRadius: 15,
-    backgroundColor: "#f0f0f0",
-    width: 45,
-    justifyContent: "center",
-    height: 45,
   },
   descriptionText: {
     color: "#555",
