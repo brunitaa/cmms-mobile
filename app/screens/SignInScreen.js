@@ -22,10 +22,6 @@ const SignInScreen = ({ navigation }) => {
 
   const handleSignIn = useCallback(async () => {
     if (!email.trim() || !password.trim()) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "WorkOrdersScreen" }],
-      });
       return ToastAndroid.show(
         "Por favor, completa todos los campos",
         ToastAndroid.SHORT
